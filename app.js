@@ -65,38 +65,48 @@ app.get("/", async (req, res) => {
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #6da3ff, #91c8ff);
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
       min-height: 100vh;
       margin: 0;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       text-align: center;
+      color: #fff;
     }
     h1 {
-      color: #ffffff;
-      margin-bottom: 30px;
       font-size: 36px;
+      margin-bottom: 30px;
+      letter-spacing: 1.5px;
     }
     .card {
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
-      max-width: 500px;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1), -10px -10px 20px rgba(255, 255, 255, 0.5);
       width: 90%;
+      max-width: 600px;
+      margin-bottom: 20px;
     }
     .db-status {
-      margin: 20px 0;
+      margin-bottom: 25px;
+      padding: 15px;
       font-size: 18px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.05), inset -4px -4px 8px rgba(255, 255, 255, 0.2);
+    }
+    .db-status strong {
+      font-weight: bold;
+      color: #333;
     }
     .ok {
-      color: #2ecc71;
+      color: #28a745;
       font-weight: bold;
     }
     .error {
-      color: #e74c3c;
+      color: #dc3545;
       font-weight: bold;
     }
     .result {
@@ -112,23 +122,18 @@ app.get("/", async (req, res) => {
   
   <div class="card">
     <div class="db-status">
-      <strong>MySQL:</strong> <span class="${
-        mysqlStatus.includes("Conectado") ? "ok" : "error"
-      }">${mysqlStatus}</span>
+      <strong>MySQL:</strong> <span class="${mysqlStatus.includes("Conectado") ? 'ok' : 'error'}">${mysqlStatus}</span>
       <div class="result">${mysqlResult}</div>
     </div>
 
     <div class="db-status">
-      <strong>PostgreSQL:</strong> <span class="${
-        postgresStatus.includes("Conectado") ? "ok" : "error"
-      }">${postgresStatus}</span>
+      <strong>PostgreSQL:</strong> <span class="${postgresStatus.includes("Conectado") ? 'ok' : 'error'}">${postgresStatus}</span>
       <div class="result">${postgresResult}</div>
     </div>
   </div>
 
 </body>
 </html>
-
   `);
 });
 
