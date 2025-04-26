@@ -11,6 +11,9 @@ const dbConfigMySQL = {
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   port: process.env.DB_PORT || 3306,
+  ssl: {
+    rejectUnauthorized: true
+  }
 };
 
 const dbConfigPostgres = {
@@ -18,30 +21,37 @@ const dbConfigPostgres = {
   user: process.env.DB_USER_PG,
   password: process.env.DB_PASS_PG,
   port: process.env.DB_PORT_PG || 5432,
-  database: process.env.DB_NAME_PG || 'postgres'
+  database: 'postgres', // <<< Usamos la base de datos default de PostgreSQL
+  ssl: {
+    rejectUnauthorized: true
+  }
 };
 
 app.get('/', async (req, res) => {
-  let mysqlConnectionStatus = 'Desconectado';
-  let postgresConnectionStatus = 'Desconectado';
+  let mysqlStatus = 'Desconectado';
+  let postgresStatus = 'Desconectado';
+  let mysqlResult = '';
+  let postgresResult = '';
 
   try {
     const mysqlConnection = await mysql.createConnection(dbConfigMySQL).promise();
-    await mysqlConnection.query('SELECT 1');
-    mysqlConnectionStatus = 'Conectado exitosamente a MySQL';
+    const [rows] = await mysqlConnection.query('SELECT NOW() AS datentime');
+    mysqlStatus = 'Conectado exitosamente a MySQL';
+    mysqlResult = `Hora actual desde MySQL: ${rows[0].datentime}`;
     await mysqlConnection.end();
   } catch (error) {
-    mysqlConnectionStatus = 'Error en conexión a MySQL: ' + error.message;
+    mysqlStatus = 'Error en conexión a MySQL: ' + error.message;
   }
 
   try {
     const pgClient = new Client(dbConfigPostgres);
     await pgClient.connect();
-    await pgClient.query('SELECT 1');
-    postgresConnectionStatus = 'Conectado exitosamente a PostgreSQL';
+    const result = await pgClient.query('SELECT NOW() AS current_time');
+    postgresStatus = 'Conectado exitosamente a PostgreSQL';
+    postgresResult = `Hora actual desde PostgreSQL: ${result.rows[0].current_time}`;
     await pgClient.end();
   } catch (error) {
-    postgresConnectionStatus = 'Error en conexión a PostgreSQL: ' + error.message;
+    postgresStatus = 'Error en conexión a PostgreSQL: ' + error.message;
   }
 
   res.send(`
@@ -67,6 +77,7 @@ app.get('/', async (req, res) => {
           background: white;
           border-radius: 8px;
           box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+          max-width: 600px;
         }
         .ok {
           color: green;
@@ -76,18 +87,24 @@ app.get('/', async (req, res) => {
           color: red;
           font-weight: bold;
         }
+        .result {
+          margin-top: 10px;
+          font-size: 14px;
+          color: #555;
+        }
       </style>
     </head>
     <body>
       <h1>Estado de conexiones a Bases de Datos</h1>
       <div class="status">
-        <p><strong>MySQL:</strong> <span class="${mysqlConnectionStatus.includes('Conectado') ? 'ok' : 'error'}">${mysqlConnectionStatus}</span></p>
-        <p><strong>PostgreSQL:</strong> <span class="${postgresConnectionStatus.includes('Conectado') ? 'ok' : 'error'}">${postgresConnectionStatus}</span></p>
+        <p><strong>MySQL:</strong> <span class="${mysqlStatus.includes('Conectado') ? 'ok' : 'error'}">${mysqlStatus}</span></p>
+        <div class="result">${mysqlResult}</div>
+        <p><strong>PostgreSQL:</strong> <span class="${postgresStatus.includes('Conectado') ? 'ok' : 'error'}">${postgresStatus}</span></p>
+        <div class="result">${postgresResult}</div>
       </div>
     </body>
     </html>
   `);
-  
 });
 
 app.listen(port, () => {
