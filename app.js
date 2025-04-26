@@ -63,7 +63,7 @@ app.get('/', async (req, res) => {
       <style>
         body {
           font-family: Arial, sans-serif;
-          background-color: #f0f2f5;
+          background-color:rgb(108, 167, 255);
           padding: 40px;
           text-align: center;
         }
