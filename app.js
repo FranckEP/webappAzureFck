@@ -39,7 +39,7 @@ app.get("/", async (req, res) => {
       .promise();
     const [rows] = await mysqlConnection.query("SELECT NOW() AS datentime");
     mysqlStatus = "Conectado exitosamente a MySQL";
-    mysqlResult = `Hora actual desde MySQL: ${rows[0].datentime}`;
+    mysqlResult = `Timeperiod desde MySQL: ${rows[0].datentime}`;
     await mysqlConnection.end();
   } catch (error) {
     mysqlStatus = "Error en conexión a MySQL: " + error.message;
@@ -50,7 +50,7 @@ app.get("/", async (req, res) => {
     await pgClient.connect();
     const result = await pgClient.query("SELECT NOW() AS current_time");
     postgresStatus = "Conectado exitosamente a PostgreSQL";
-    postgresResult = `Hora actual desde PostgreSQL: ${result.rows[0].current_time}`;
+    postgresResult = `Timeperiod desde PostgreSQL: ${result.rows[0].current_time}`;
     await pgClient.end();
   } catch (error) {
     postgresStatus = "Error en conexión a PostgreSQL: " + error.message;
@@ -107,7 +107,7 @@ app.get("/", async (req, res) => {
       margin-top: 10px;
     }
     .ok {
-      color: #28a745;
+      color:rgb(122, 247, 151);
       font-weight: bold;
     }
     .error {
